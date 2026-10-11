@@ -264,7 +264,7 @@ Total time to complete that: $\approx{4837}$ hours $\approx {201.5}$ days
 
 ## Problem (batch_size_experiment): Batch size variations
 
-## TODO!!!
+Batch sizes 1, 2, 4, 8, 16, 32, 64, 128 were tested. Best batch size among these (lowest validation loss over the same amount of training tokens) seemed to be 128 with a validation loss ~1.73 after 1250 steps of training followed by a validation loss ~1.81 for the batch size 64 which seemed to be the best when training speed taken into account since batch size 128 pushed the Macbook Air M4 24GB GPU to its limits and caused training to slow down because of reasons like heating as far as I'm concerned. Batch sizes below but and including 16 were to noisy after a certain part of the training for the model to progress and drive the validation loss further down and none of them got below the validation loss of ~2.40 with larger batch size still having a better validation loss at the end of training for each. All the experiments are in the W&B for the learning curves and even though may be wrong, performed with a fixed learning rate for all the batch sizes and batch sizes below and including 8 were not ran until the end of the initial planned training steps because of training getting stuck from the noise of batch size being too low.
 
 ## Problem (generate):  Generate text
 
