@@ -264,7 +264,7 @@ Total time to complete that: $\approx{4837}$ hours $\approx {201.5}$ days
 
 ## Problem (batch_size_experiment): Batch size variations
 
-Batch sizes 1, 2, 4, 8, 16, 32, 64, 128 were tested. Best batch size among these (lowest validation loss over the same amount of training tokens) seemed to be 128 with a validation loss ~1.73 after 1250 steps of training followed by a validation loss ~1.81 for the batch size 64 which seemed to be the best when training speed taken into account since batch size 128 pushed the Macbook Air M4 24GB GPU to its limits and caused training to slow down because of reasons like heating as far as I'm concerned. Batch sizes below but and including 16 were to noisy after a certain part of the training for the model to progress and drive the validation loss further down and none of them got below the validation loss of ~2.40 with larger batch size still having a better validation loss at the end of training for each. All the experiments are in the W&B for the learning curves and even though may be wrong, performed with a fixed learning rate for all the batch sizes and batch sizes below and including 8 were not ran until the end of the initial planned training steps because of training getting stuck from the noise of batch size being too low.
+Batch sizes 1, 2, 4, 8, 16, 32, 64, 128 were tested. Best batch size among these (lowest validation loss over the same amount of training tokens) was 128 with a validation loss ~1.73 after 1250 steps of training followed by a validation loss ~1.81 for the batch size 64 which I think is the best when training speed taken into account since batch size 128 pushed the Macbook Air M4 24GB GPU to its limits and caused training to slow down because of reasons like heating in my opinion. Batch sizes below and including 16 were too noisy after a certain part of the training for the model to progress and drive the validation loss further down and none of them got below the validation loss of ~2.40,  while larger batch sizes still having a better validation loss at the end of training for each of those experiments. All the experiments are in the W&B for the learning curves and even though may be wrong, performed with a fixed learning rate for all the batch sizes. Batch sizes below and including 8 were not ran until the end of the initial planned training steps because of training getting stuck from the noise of batch size being too low.
 
 ## Problem (generate):  Generate text
 
@@ -276,3 +276,15 @@ Then, Lucy had an idea. She said, "I promise, Tim. I will try my best to be more
 <|endoftext|>
 
 I feel like decreasing the temperature causes logical errors and mixing words like "key" and "toy" or using them interchangably even though they're not synonyms. Decreasing the top-p is increasing the chances we're going to get the same output for the same input and little things change in the outputs when the top-p is low.
+
+## Problem (layer_norm_ablation):  Remove RMSNorm and train
+
+Learning curves are in the W&B workspace. Firstly, I experimented with with only the removal of RMSNorm from our Transformer Block Module and experiment was cancelled mid-run because we started seeing NaN values in the training loss after ~50 steps. In the second experiment, we tested to change the max learning rate to the 1/10th of what we had in the first experiment to stabilize the training but model still wasn't able to learn anything meaningful or drive neither of losses to below 8. Thirdly, we lowered the max lr again by dividing it to 10 and we also lowered the min lr to 1/10th of its value and this time model was able to learn a little more and drived the val loss around 3.76 which is still not good compared to the baseline's 1.81 for the same amount of steps.
+
+## Problem (pre_norm_ablation):  Implement post-norm and train
+
+We did only one experiment with all config being the same and only changing the pre-norm to post-norm for the normalization in the transformer block. Results were surprising as they outperformed the pre-norm throughout the training in terms of validation loss for the same amount of steps, the post-norm model was able to drive validation loss down to 1.66 by the end of training with batch size 64 and 2500 steps compared to 1.81 that pre-norm baseline had.
+
+## Problem (no_pos_emb):  Implement NoPE (0.5 B200 hrs)
+
+Same configs were used except the fact that RoPE for the positional embeddings wasn't applied during the attention operation to test the no positional embedding architecture. NoPE only was able to reach ~5.31 for both the training and validation losses at the end of the training and wasn't able to learn anything meaningful compared to RoPE which has ~1.66 validation loss for the same training config except the positional embedding change.

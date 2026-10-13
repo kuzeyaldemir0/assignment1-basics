@@ -155,7 +155,7 @@ def generate(
 
 if __name__ == "__main__":
     args = parser.parse_args()
-    wandb.init(project="cs336-a1", config=vars(args), group="batch-size-sweep", name=args.run_name)
+    wandb.init(project="cs336-a1", config=vars(args), group="ablations", name=args.run_name)
     device = torch.device("mps")
     
     # Instantiate the tokenizer from saved vocab and merges

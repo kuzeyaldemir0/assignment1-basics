@@ -32,7 +32,6 @@ class Linear(torch.nn.Module):
             )
         )
 
-
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         return einsum(
             x, self.weight, "... d_in, d_out d_in -> ... d_out"
@@ -85,7 +84,6 @@ class RMSNorm(torch.nn.Module):
                 device=device
             )
         )
-
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """Process an input tensor of shape (batch_size, sequence_length, d_model)
@@ -226,7 +224,6 @@ class MultiHead_self_attention(torch.nn.Module):
                 theta, self.d_head, context_length, device=device, dtype=dtype
             )
 
-
     def forward(
         self,
         x,
@@ -287,7 +284,6 @@ class MultiHead_self_attention(torch.nn.Module):
         )
         return self.output_proj(attention_heads_concated)
 
-
 class transformer_block(torch.nn.Module):
     def __init__(
         self,
@@ -310,9 +306,8 @@ class transformer_block(torch.nn.Module):
         self.ffn = swiglu_FFN(d_model, d_ff, device=device, dtype=dtype)
 
     def forward(self, x):
-        x = x + self.attn(self.ln1(x))
-        return x + self.ffn(self.ln2(x))
-
+        x = self.ln1(x + self.attn(x))
+        return self.ln2(x + self.ffn(x))
 
 class transformer_lm(torch.nn.Module):
     def __init__(
@@ -344,7 +339,6 @@ class transformer_lm(torch.nn.Module):
             in_features=d_model, out_features=vocab_size,
             device=device, dtype=dtype
         )
-
 
     def forward(self, x):
         x = self.token_embeddings(x)
@@ -386,12 +380,3 @@ def cross_entropy_loss(
         "mean"
     )
     return avg_loss
-
-
-
-if __name__ == "__main__":
-    # batch_size = 2, vocab_size = 4
-    logits = torch.Tensor([[10.2, 1.3, 2.4, 4.3], [1.8, 11.7, 101.9, 12.1]]) # shape: (2, 4)
-    targets = torch.Tensor([0, 2]).to(torch.int32) # shape: (2, )
-    print(cross_entropy_loss(logits, targets))
-
