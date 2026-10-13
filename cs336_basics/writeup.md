@@ -288,3 +288,7 @@ We did only one experiment with all config being the same and only changing the 
 ## Problem (no_pos_emb):  Implement NoPE (0.5 B200 hrs)
 
 Same configs were used except the fact that RoPE for the positional embeddings wasn't applied during the attention operation to test the no positional embedding architecture. NoPE only was able to reach ~5.31 for both the training and validation losses at the end of the training and wasn't able to learn anything meaningful compared to RoPE which has ~1.66 validation loss for the same training config except the positional embedding change.
+
+## Problem (swiglu_ablation):  SwiGLU vs. SiLU
+
+SiLU wasn't able to learn anything meaningful and got stuck around 5.3 for the validation loss which was surprising to me that this Gating unit in the SwiGLU was this important for the training.

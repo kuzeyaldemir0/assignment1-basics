@@ -113,7 +113,6 @@ class swiglu_FFN(torch.nn.Module):
         self.w2 = Linear(d_ff, d_model, device=device, dtype=dtype)
         self.w3 = Linear(d_model, d_ff, device=device, dtype=dtype)
 
-
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         branch_1 = self.w1(x)
         branch_1 = branch_1 * torch.sigmoid(branch_1)
